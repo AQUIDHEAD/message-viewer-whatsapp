@@ -1,13 +1,15 @@
 // src/components/ChatWindow.js
 import React, { useEffect, useState } from 'react';
 import './ChatWindow.css'; // Include your CSS file for styling
+import MessageBubble from './MessageBubble'; // Import the MessageBubble component
 
 const ChatWindow = () => {
-  const [allMessages, setAllMessages] = useState([]); // To store all cleaned messages
-  const [displayedMessages, setDisplayedMessages] = useState([]); // To store messages currently displayed
-  const [currentIndex, setCurrentIndex] = useState(0); // To keep track of the next message index to load
+  const [allMessages, setAllMessages] = useState([]);
+  const [displayedMessages, setDisplayedMessages] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const MESSAGES_PER_LOAD = 100; // Number of messages to load each time
+  const MESSAGES_PER_LOAD = 100;
 
   useEffect(() => {
     const fetchChatMessages = async () => {
@@ -29,8 +31,10 @@ const ChatWindow = () => {
         const initialMessages = lines.slice(0, MESSAGES_PER_LOAD);
         setDisplayedMessages(initialMessages);
         setCurrentIndex(MESSAGES_PER_LOAD);
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching or cleaning chat messages:', error);
+        setIsLoading(false);
       }
     };
 
@@ -48,16 +52,23 @@ const ChatWindow = () => {
   return (
     <div className="chat-window">
       <h2>Chat Window</h2>
-      <div className="chat-messages">
-        {displayedMessages.map((line, index) => (
-          <p key={index} className="chat-line">{line}</p>
-        ))}
-      </div>
 
-      {currentIndex < allMessages.length && (
-        <button onClick={loadMoreMessages} className="load-more-button">
-          Load More Messages
-        </button>
+      {isLoading ? (
+        <p>Loading messages...</p>
+      ) : (
+        <>
+          <div className="chat-messages">
+            {displayedMessages.map((line, index) => (
+              <MessageBubble key={index} message={line} />
+            ))}
+          </div>
+
+          {currentIndex < allMessages.length && (
+            <button onClick={loadMoreMessages} className="load-more-button">
+              Load More Messages
+            </button>
+          )}
+        </>
       )}
     </div>
   );
