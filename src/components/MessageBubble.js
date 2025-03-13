@@ -1,7 +1,7 @@
-// src/components/MessageBubble.js
 import React from 'react';
+import "./MessageBubble.css";
 
-const MessageBubble = ({ message }) => {
+const MessageBubble = ({ message, users }) => {
   // Preprocess the message to remove problematic Unicode characters
   const cleanedMessage = message.replace(/[\u200E\u202F]/g, '');
 
@@ -9,99 +9,57 @@ const MessageBubble = ({ message }) => {
   const regex = /^[[]([^$]+),\s+([^\]]+)\]\s+(?:(.+?):\s+)?(.*)$/mu;
   const match = cleanedMessage.match(regex);
 
-  console.log(match);
-
   if (match) {
     const [, date, time, user, content] = match;
 
-    // Variables for user and content
-    const messageUser = user;
-    const messageContent = content;
+    // Determine the CSS class based on the user
+    const messageClass = user === users[0] ? 'from-them' : 'from-me';
+
+    console.log(messageClass);
 
     const regexFile = /<attached:\s([\w-]+)\.(opus|webp|mp4|jpg)>/;
-    const matchFile = messageContent.match(regexFile);
-
-    // Placeholder logic to determine message type
-    let messageType = 'text';
+    const matchFile = content.match(regexFile);
 
     if (matchFile) {
       const [, fileName, fileType] = matchFile;
-
       const completeFile = './files/' + fileName + '.' + fileType;
 
       switch(fileType) {
         case 'opus':
-          messageType = 'audio';
-          // Make a new audio message bubble
           return (
-            <div
-              className="audio-bubble"
-              data-date={date}
-              data-time={time}
-            >
-              <audio
-                src={completeFile}
-                type={fileType}
-                controls="true"
-                autoPlay="false"
-                loop="false"
-              ></audio>
+            <div style={{padding: '0.4rem'}}>
+              <audio className={`imessage ${messageClass}`} data-date={date} data-time={time} src={completeFile} type={fileType} controls />
             </div>
           );
-        case 'jpg' || 'webp':
-          messageType = 'image';
-          // Make a new image message bubble
+        case 'jpg':
+        case 'webp':
           return (
-            <div
-              className="image-bubble"
-              data-date={date}
-              data-time={time}
-            >
-              <img
-                src={completeFile}
-                alt='image'
-              />
+            <div style={{padding: '0.4rem'}}>
+              <img className={`imessage ${messageClass}`} data-date={date} data-time={time} src={completeFile} alt=''/>
             </div>
           );
         case 'mp4':
-          messageType = 'video';
-          // Make a new video message bubble
           return (
-            <div
-              className="video-bubble"
-              data-date={date}
-              data-time={time}
-            >
-              <video
-                controls
-                src={completeFile}
-                type="video/mp4"
+            <div style={{padding: '0.4rem'}}>
+              <video 
+                className={`imessage ${messageClass}`} data-date={date} data-time={time} 
+                controls 
+                src={completeFile} 
+                type="video/mp4" 
               />
             </div>
           );
+        default:
+          break;
       }
-      
     } else {
-      console.log(`Message from ${messageUser} is of type ${messageType}`);
-
-      // Return the message bubble component
       return (
-        <div
-          className="message-bubble"
-          data-date={date}
-          data-time={time}
-        >
-          <strong>{messageUser}</strong>: {messageContent}
-        </div>
+          <p data-date={date} data-time={time} className={`imessage ${messageClass}`}>{user} {content}</p>
       );
     }
   } else {
-    // Handle messages that don't match the expected format
-    console.warn('Message did not match expected format:', message);
     return (
-      <div className="message-bubble">
-        {message}
-      </div>
+        <p className="imessage from-me">{message}</p>
     );
   }
 };

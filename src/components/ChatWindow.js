@@ -1,7 +1,21 @@
-// src/components/ChatWindow.js
 import React, { useEffect, useState } from 'react';
 import './ChatWindow.css'; // Include your CSS file for styling
 import MessageBubble from './MessageBubble'; // Import the MessageBubble component
+
+// Function to identify unique users from messages
+function identifyUsers(messages) {
+  const userSet = new Set();
+  const userRegex = /^[[][^$]+,\s+[^\]]+\]\s+(.+?):/mu;
+
+  messages.forEach((message) => {
+    const match = message.match(userRegex);
+    if (match) {
+      userSet.add(match[1]); // Add the user to the set
+    }
+  });
+
+  return Array.from(userSet);
+}
 
 const ChatWindow = () => {
   const [allMessages, setAllMessages] = useState([]);
@@ -49,6 +63,9 @@ const ChatWindow = () => {
     setCurrentIndex(nextIndex);
   };
 
+  // Identify users from all messages
+  const users = identifyUsers(allMessages);
+
   return (
     <div className="chat-window">
       <h2>Chat Window</h2>
@@ -57,9 +74,9 @@ const ChatWindow = () => {
         <p>Loading messages...</p>
       ) : (
         <>
-          <div className="chat-messages">
+          <div className="imessage">
             {displayedMessages.map((line, index) => (
-              <MessageBubble key={index} message={line} />
+              <MessageBubble key={index} message={line} users={users} />
             ))}
           </div>
 

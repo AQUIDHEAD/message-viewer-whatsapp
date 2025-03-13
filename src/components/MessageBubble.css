@@ -1,0 +1,112 @@
+
+  .imessage {
+    background-color: #f5e3c7;
+    border: 1px solid #e5e5ea;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    font-family: "SanFrancisco";
+    font-size: 1.25rem;
+    max-width: 1200px;
+    padding: 0.5rem 1.5rem;
+  }
+
+  /* Text */
+
+  .imessage p {
+    border-radius: 1.15rem;
+    line-height: 1.25;
+    max-width: 75%;
+    padding: 0.5rem .875rem;
+    position: relative;
+    word-wrap: break-word;
+  }
+
+  p.from-me {
+    align-self: flex-end;
+    background-color: #248bf5;
+    color: #fff; 
+    margin-left: auto;
+  }
+
+  p.from-them {
+    align-items: flex-start;
+    background-color: #e5e5ea;
+    color: #000;
+    margin-right: auto;
+  }
+
+  /* Audio */
+
+  .imessage audio {
+    border-radius: 10rem;
+    line-height: 1.25;
+    max-width: 75%;
+    padding: 0.5rem .875rem;
+    position: relative;
+    word-wrap: break-word;
+  }
+
+  audio.from-me {
+    align-self: flex-end;
+    background-color: #248bf5;
+    color: #fff; 
+    margin-left: auto;
+  }
+
+  audio.from-them {
+    align-self: flex-start;
+    background-color: #e5e5ea;
+    color: #000;
+    margin-right: auto;
+  }
+
+  /* Video */
+
+  .imessage video {
+    border-radius: 1.5rem;
+    line-height: 1.25;
+    max-width: 50%;
+    padding: 0.5rem .875rem;
+    position: relative;
+    word-wrap: break-word;
+  }
+
+  video.from-me {
+    align-self: flex-end;
+    background-color: #248bf5;
+    color: #fff; 
+    margin-left: auto;
+  }
+
+  video.from-them {
+    align-self: flex-start;
+    background-color: #e5e5ea;
+    color: #000;
+    margin-right: auto;
+  }
+
+  /* Image */
+
+  .imessage img {
+    border-radius: 1.5rem;
+    line-height: 1.25;
+    max-width: 35%;
+    padding: 0.5rem .875rem;
+    position: relative;
+    word-wrap: break-word;
+  }
+
+  img.from-me {
+    align-self: flex-end;
+    background-color: #248bf5;
+    color: #fff; 
+    margin-left: auto;
+  }
+
+  img.from-them {
+    align-self: flex-start;
+    background-color: #e5e5ea;
+    color: #000;
+    margin-right: auto;
+  }
