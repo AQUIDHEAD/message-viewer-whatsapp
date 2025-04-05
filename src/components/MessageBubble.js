@@ -1,5 +1,5 @@
 import React from 'react';
-import "./MessageBubble.css";
+import "./styles/MessageBubble.css";
 
 const MessageBubble = ({ message, users }) => {
   // Preprocess the message to remove problematic Unicode characters

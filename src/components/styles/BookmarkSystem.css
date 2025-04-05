@@ -1,0 +1,91 @@
+.bookmark-system {
+    padding: 15px;
+  }
+  
+  .bookmarks-list {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .bookmark-item {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 10px 0;
+    padding: 10px;
+  }
+  
+  .bookmark-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .bookmark-date {
+    font-size: 0.8em;
+    color: #666;
+  }
+  
+  .delete-bookmark {
+    background: none;
+    border: none;
+    color: #ff4444;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  .bookmark-preview {
+    font-size: 0.9em;
+    margin: 5px 0;
+    cursor: pointer;
+    padding: 5px;
+    background-color: #fff;
+    border-radius: 3px;
+  }
+  
+  .bookmark-note {
+    font-size: 0.8em;
+    color: #666;
+    font-style: italic;
+    margin: 5px 0;
+    padding: 5px;
+    background-color: #fff;
+    border-radius: 3px;
+  }
+  
+  .add-note {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+  }
+  
+  .add-note input {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+  }
+  
+  .add-note button,
+  .add-note-button {
+    padding: 5px 10px;
+    background-color: #248bf5;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  .add-note-button {
+    width: 100%;
+    margin-top: 5px;
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  .no-bookmarks {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+  }
