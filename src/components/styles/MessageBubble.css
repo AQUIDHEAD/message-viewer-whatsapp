@@ -110,3 +110,43 @@
     color: #000;
     margin-right: auto;
   }
+
+  .message-container {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .bookmark-option {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: flex;
+    gap: 8px;
+  }
+  
+  .bookmark-option button {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .bookmark-option button:first-child {
+    background-color: #248bf5;
+    color: white;
+  }
+  
+  .bookmark-option button:last-child {
+    background-color: #f0f0f0;
+  }
+  
+  .bookmark-option button:hover {
+    opacity: 0.9;
+  }

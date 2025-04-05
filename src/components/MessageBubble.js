@@ -1,21 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import "./styles/MessageBubble.css";
 
-const MessageBubble = ({ message, users }) => {
-  // Preprocess the message to remove problematic Unicode characters
-  const cleanedMessage = message.replace(/[\u200E\u202F]/g, '');
+const MessageBubble = ({ message, users, onBookmark }) => {
+  const [showBookmarkOption, setShowBookmarkOption] = useState(false);
 
-  // Regular expression to parse the message format
+  // Existing message parsing code
+  const cleanedMessage = message.replace(/[\u200E\u202F]/g, '');
   const regex = /^[[]([^$]+),\s+([^\]]+)\]\s+(?:(.+?):\s+)?(.*)$/mu;
   const match = cleanedMessage.match(regex);
 
+  const handleClick = (e) => {
+    e.preventDefault();
+    setShowBookmarkOption(true);
+  };
+
+  const handleBookmark = () => {
+    onBookmark(message);
+    setShowBookmarkOption(false);
+  };
+
+  // Define renderBookmarkOption before using it
+  const renderBookmarkOption = () => (
+    <div className="bookmark-option" onClick={(e) => e.stopPropagation()}>
+      <button onClick={handleBookmark}>Bookmark</button>
+      <button onClick={() => setShowBookmarkOption(false)}>Cancel</button>
+    </div>
+  );
+
   if (match) {
     const [, date, time, user, content] = match;
-
-    // Determine the CSS class based on the user
     const messageClass = user === users[0] ? 'from-them' : 'from-me';
-
-    console.log(messageClass);
 
     const regexFile = /<attached:\s([\w-]+)\.(opus|webp|mp4|jpg)>/;
     const matchFile = content.match(regexFile);
@@ -27,26 +41,29 @@ const MessageBubble = ({ message, users }) => {
       switch(fileType) {
         case 'opus':
           return (
-            <div style={{padding: '0.4rem'}}>
+            <div style={{padding: '0.4rem'}} onClick={handleClick}>
               <audio className={`imessage ${messageClass}`} data-date={date} data-time={time} src={completeFile} type={fileType} controls />
+              {showBookmarkOption && renderBookmarkOption()}
             </div>
           );
         case 'jpg':
         case 'webp':
           return (
-            <div style={{padding: '0.4rem'}}>
+            <div style={{padding: '0.4rem'}} onClick={handleClick}>
               <img className={`imessage ${messageClass}`} data-date={date} data-time={time} src={completeFile} alt=''/>
+              {showBookmarkOption && renderBookmarkOption()}
             </div>
           );
         case 'mp4':
           return (
-            <div style={{padding: '0.4rem'}}>
+            <div style={{padding: '0.4rem'}} onClick={handleClick}>
               <video 
                 className={`imessage ${messageClass}`} data-date={date} data-time={time} 
                 controls 
                 src={completeFile} 
                 type="video/mp4" 
               />
+              {showBookmarkOption && renderBookmarkOption()}
             </div>
           );
         default:
@@ -54,14 +71,22 @@ const MessageBubble = ({ message, users }) => {
       }
     } else {
       return (
-          <p data-date={date} data-time={time} className={`imessage ${messageClass}`}>{user} {content}</p>
+        <div className="message-container" onClick={handleClick}>
+          <p data-date={date} data-time={time} className={`imessage ${messageClass}`}>
+            {user} {content}
+          </p>
+          {showBookmarkOption && renderBookmarkOption()}
+        </div>
       );
     }
-  } else {
-    return (
-        <p className="imessage from-me">{message}</p>
-    );
   }
+
+  return (
+    <div className="message-container" onClick={handleClick}>
+      <p className="imessage from-me">{message}</p>
+      {showBookmarkOption && renderBookmarkOption()}
+    </div>
+  );
 };
 
 export default MessageBubble;

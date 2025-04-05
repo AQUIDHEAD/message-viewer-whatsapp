@@ -18,27 +18,13 @@ function identifyUsers(messages) {
   return Array.from(userSet);
 }
 
-// Function to extract dates from messages
-function extractDates(messages) {
-  const dateSet = new Set();
-  const dateRegex = /^\[([^,]+)/;
-
-  messages.forEach((message) => {
-    const match = message.match(dateRegex);
-    if (match) {
-      dateSet.add(match[1].trim());
-    }
-  });
-
-  return Array.from(dateSet).sort();
-}
-
 const ChatWindow = () => {
   // Existing state
   const [allMessages, setAllMessages] = useState([]);
   const [displayedMessages, setDisplayedMessages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // New state for additional features
   const [filteredMessages, setFilteredMessages] = useState([]);
@@ -52,23 +38,32 @@ const ChatWindow = () => {
   useEffect(() => {
     const fetchChatMessages = async () => {
       try {
+        // Fetch the chat file from the public folder
         const response = await fetch('/files/_chat.txt');
         const data = await response.text();
+
+        // Remove unnecessary Unicode characters like U+200E
         const cleanedData = data.replace(/\u200E/g, '');
+
+        // Split the data into lines and remove empty lines
         const lines = cleanedData.split('\n').filter(line => line.trim() !== '');
-        console.log('Fetched Messages:', lines); // Add this debug line
+
+        // Update state with all messages
         setAllMessages(lines);
-        setDisplayedMessages(lines.slice(0, MESSAGES_PER_LOAD));
-        setCurrentIndex(MESSAGES_PER_LOAD);
+
+        // Load the first set of messages
+        const initialMessages = lines.slice(0, messageLoadCount);
+        setDisplayedMessages(initialMessages);
+        setCurrentIndex(messageLoadCount);
         setIsLoading(false);
       } catch (error) {
-        console.error('Error fetching chat messages:', error);
+        console.error('Error fetching or cleaning chat messages:', error);
         setIsLoading(false);
       }
     };
-  
+
     fetchChatMessages();
-  }, []);
+  }, [messageLoadCount]);
 
   // Existing function
   const loadMoreMessages = () => {
@@ -79,7 +74,7 @@ const ChatWindow = () => {
     setCurrentIndex(nextIndex);
   };
 
-  // New functions for additional features
+  // Handle date jump
   const handleDateJump = (date) => {
     const messageIndex = allMessages.findIndex(msg => msg.includes(date));
     if (messageIndex !== -1) {
@@ -89,6 +84,7 @@ const ChatWindow = () => {
     }
   };
 
+  // Handle load count change
   const handleLoadCountChange = (count) => {
     if (count === 'all') {
       setDisplayedMessages(allMessages);
@@ -101,6 +97,7 @@ const ChatWindow = () => {
     }
   };
 
+  // Handle search
   const handleSearch = (term) => {
     setSearchTerm(term);
     if (term) {
@@ -115,6 +112,7 @@ const ChatWindow = () => {
     }
   };
 
+  // Handle filters
   const handleFilter = ({ type, user }) => {
     setActiveFilters({ type, user });
     let filtered = [...allMessages];
@@ -144,26 +142,19 @@ const ChatWindow = () => {
     setDisplayedMessages(filtered.slice(0, messageLoadCount));
   };
 
-  const handleBookmark = (messageIndex, note = '') => {
+  // Bookmark functions
+  const handleBookmark = (message, index) => {
     const newBookmark = {
-      messageIndex,
-      message: allMessages[messageIndex],
-      note,
+      message,
+      messageIndex: index,
       timestamp: new Date().toISOString()
     };
     setBookmarks(prev => [...prev, newBookmark]);
   };
 
-  const handleJumpToBookmark = (messageIndex) => {
-    const startIndex = Math.max(0, messageIndex - 10);
-    setDisplayedMessages(allMessages.slice(startIndex, messageIndex + 15));
-    setCurrentIndex(messageIndex + 15);
-  };
-
-  // Add these functions in the ChatWindow component
   const handleAddBookmarkNote = (bookmarkIndex, note) => {
-    setBookmarks(prevBookmarks => {
-      const newBookmarks = [...prevBookmarks];
+    setBookmarks(prev => {
+      const newBookmarks = [...prev];
       newBookmarks[bookmarkIndex] = {
         ...newBookmarks[bookmarkIndex],
         note
@@ -173,20 +164,22 @@ const ChatWindow = () => {
   };
 
   const handleDeleteBookmark = (bookmarkIndex) => {
-    setBookmarks(prevBookmarks => 
-      prevBookmarks.filter((_, index) => index !== bookmarkIndex)
-    );
+    setBookmarks(prev => prev.filter((_, index) => index !== bookmarkIndex));
+  };
+
+  const handleJumpToBookmark = (messageIndex) => {
+    const startIndex = Math.max(0, messageIndex - 10);
+    setDisplayedMessages(allMessages.slice(startIndex, messageIndex + 15));
+    setCurrentIndex(messageIndex + 15);
+  };
+
+  // Handle sidebar state
+  const handleSidebarToggle = (isOpen) => {
+    setIsSidebarOpen(isOpen);
   };
 
   // Identify users from all messages
   const users = identifyUsers(allMessages);
-
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // Add this function to handle sidebar state
-  const handleSidebarToggle = (isOpen) => {
-    setIsSidebarOpen(isOpen);
-  };
 
   return (
     <>
@@ -204,6 +197,7 @@ const ChatWindow = () => {
         bookmarks={bookmarks}
         messageLoadCount={messageLoadCount}
         activeFilters={activeFilters}
+        onToggle={handleSidebarToggle}
       />
       <div className={`chat-window ${isSidebarOpen ? 'sidebar-open' : ''}`}>
         <h2>Chat Window</h2>
@@ -218,7 +212,7 @@ const ChatWindow = () => {
                   key={index} 
                   message={line} 
                   users={users}
-                  onBookmark={() => handleBookmark(index)}
+                  onBookmark={() => handleBookmark(line, index)}
                 />
               ))}
             </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/BookmarkSystem.css';
 
-const BookmarkSystem = ({ bookmarks, onJumpToBookmark, onAddNote, onDeleteBookmark }) => {
+const BookmarkSystem = ({ bookmarks = [], onJumpToBookmark, onAddNote, onDeleteBookmark }) => {
   const [newNote, setNewNote] = useState('');
   const [selectedBookmark, setSelectedBookmark] = useState(null);
 
@@ -11,6 +11,11 @@ const BookmarkSystem = ({ bookmarks, onJumpToBookmark, onAddNote, onDeleteBookma
       setNewNote('');
       setSelectedBookmark(null);
     }
+  };
+
+  const formatDate = (dateStr) => {
+    const match = dateStr.match(/\[([^,]+)/);
+    return match ? match[1] : dateStr;
   };
 
   return (
@@ -24,17 +29,21 @@ const BookmarkSystem = ({ bookmarks, onJumpToBookmark, onAddNote, onDeleteBookma
             <div key={index} className="bookmark-item">
               <div className="bookmark-header">
                 <span className="bookmark-date">
-                  {new Date(bookmark.timestamp).toLocaleDateString()}
+                  {formatDate(bookmark.message)}
                 </span>
                 <button 
                   onClick={() => onDeleteBookmark(index)}
                   className="delete-bookmark"
                 >
+                  ×
                 </button>
               </div>
               
-              <div className="bookmark-preview" onClick={() => onJumpToBookmark(bookmark.messageIndex)}>
-                {bookmark.message.substring(0, 50)}...
+              <div 
+                className="bookmark-preview" 
+                onClick={() => onJumpToBookmark(bookmark.messageIndex)}
+              >
+                {bookmark.message.substring(bookmark.message.indexOf(']:') + 2).slice(0, 50)}...
               </div>
 
               {bookmark.note && (
