@@ -2,6 +2,8 @@
   "name": "message-viwer-whatsapp",
   "version": "0.1.0",
   "private": true,
+  "main": "public/electron.js",
+  "homepage": "./",
   "dependencies": {
     "cra-template": "1.2.0",
     "react": "^19.0.0",
@@ -12,7 +14,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron-dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron": "electron .",
+    "electron-build-windows": "npm run build && electron-builder -w"
   },
   "eslintConfig": {
     "extends": [
@@ -31,5 +36,34 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^22.3.27",
+    "electron-builder": "^23.6.0",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.example.message-viewer",
+    "productName": "WhatsApp Message Viewer",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "package.json",
+      "public/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
   }
 }
